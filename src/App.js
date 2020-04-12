@@ -2,28 +2,37 @@ import React, { useState } from 'react';
 import ReactDOM from 'react-dom';
 import './App.css';
 
-const useInput = (initialValue, validator) => {
-  const [value, setValue] = useState(initialValue)
-  const onChange = event => {
-    const {target: {value}} = event;
-    let willUpdate = true;
-    if(typeof validator === "function") {
-      willUpdate = validator(value)
-    }
-    if(willUpdate) {
-      setValue(value) 
-    }
+const content = [
+  {
+    tab: "Section 1",
+    content: "I am the content of section 1"
+  },
+  {
+    tab: "Section 2",
+    content: "I am the content of section 2"
   }
-  return {value, onChange}
+]
+
+const useTabs = (initialTab, allTabs) => {
+  const [index, setIndex] = useState(initialTab)
+  if(!allTabs || !Array.isArray(allTabs)) {
+    return;
+  }
+  return {
+    currentItem: allTabs[index],
+    changeItem : setIndex
+  }
 }
 
 const App = () => {
-  const maxLen = value => !value.includes("@");
-  const name = useInput("Mr. ", maxLen)
+  const {currentItem, changeItem} = useTabs(0, content)
   return (
     <div className="App">
       <h2>Hello</h2>
-      <input placeholder="Name" {...name}/>
+      {content.map((section, index) => <button onClick={() => changeItem(index)}>{section.tab}</button>)}
+      <div>
+        {currentItem.content}
+      </div>
     </div>
   );
 }
