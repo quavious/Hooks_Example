@@ -2,22 +2,28 @@ import React, { useState } from 'react';
 import ReactDOM from 'react-dom';
 import './App.css';
 
+const useInput = (initialValue, validator) => {
+  const [value, setValue] = useState(initialValue)
+  const onChange = event => {
+    const {target: {value}} = event;
+    let willUpdate = true;
+    if(typeof validator === "function") {
+      willUpdate = validator(value)
+    }
+    if(willUpdate) {
+      setValue(value) 
+    }
+  }
+  return {value, onChange}
+}
+
 const App = () => {
-  const [item, setItem] = useState(1)
-  const incrementItem = () => {
-    if(item<10)
-      setItem(item + 1); 
-  }
-  const decrementItem = () => {
-    if(item>0)
-      setItem(item - 1);
-  }
+  const maxLen = value => !value.includes("@");
+  const name = useInput("Mr. ", maxLen)
   return (
     <div className="App">
-      <h2>Hello {item}</h2>
-      <h2>Start</h2>
-      <button onClick={incrementItem}>Increment</button>
-      <button onClick={decrementItem}>Decrement</button>
+      <h2>Hello</h2>
+      <input placeholder="Name" {...name}/>
     </div>
   );
 }
